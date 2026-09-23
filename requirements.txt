@@ -1,0 +1,12 @@
+streamlit
+chromadb
+pymupdf
+python-pptx
+python-docx
+pytesseract
+pillow
+requests
+pydantic
+python-dotenv
+rich
+pandas
