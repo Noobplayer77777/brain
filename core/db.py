@@ -272,6 +272,7 @@ def init_db():
             )
         """)
 
+        # Review Logs
         conn.execute("""
             CREATE TABLE IF NOT EXISTS review_log (
                 id TEXT PRIMARY KEY,
@@ -281,6 +282,39 @@ def init_db():
                 mastery_before REAL,
                 mastery_after REAL,
                 FOREIGN KEY(concept_id) REFERENCES concepts(id)
+            )
+        """)
+
+        # Phase 7: Sessions, Mocks, Settings
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS study_sessions (
+                id TEXT PRIMARY KEY,
+                started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                ended_at TIMESTAMP,
+                task_type TEXT,
+                concept_id TEXT,
+                question_id TEXT,
+                minutes INTEGER,
+                notes TEXT
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS mock_exams (
+                id TEXT PRIMARY KEY,
+                subject TEXT,
+                taken_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                duration_min INTEGER,
+                total_score REAL,
+                max_score REAL,
+                report_json TEXT
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT
             )
         """)
 

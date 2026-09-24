@@ -4,7 +4,7 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-from ui.tabs import library, chat, syllabus, coverage, questions, practice
+from ui.tabs import dashboard, library, chat, syllabus, coverage, questions, practice, plan, settings
 from core.db import init_db
 
 init_db()
@@ -12,25 +12,34 @@ init_db()
 st.set_page_config(page_title="Exam Brain", layout="wide")
 st.title("🧠 Exam Brain")
 
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(["Library", "💬 Ask", "🗺️ Syllabus", "📊 Coverage", "📝 Questions", "🧠 Practice", "Settings"])
+tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+    "📊 Dashboard", "📅 Plan", "Library", "💬 Ask", "🗺️ Syllabus", "📊 Coverage", "📝 Questions", "🧠 Practice"
+])
 
 with tab1:
-    library.render()
+    dashboard.render()
 
 with tab2:
-    chat.render()
+    plan.render()
 
 with tab3:
-    syllabus.render()
+    library.render()
 
 with tab4:
-    coverage.render()
+    chat.render()
 
 with tab5:
-    questions.render()
+    syllabus.render()
 
 with tab6:
-    practice.render()
+    coverage.render()
 
 with tab7:
-    st.info("Settings tab coming soon")
+    questions.render()
+
+with tab8:
+    practice.render()
+
+# Sidebar for Settings (so it's out of the way)
+with st.sidebar:
+    settings.render()
