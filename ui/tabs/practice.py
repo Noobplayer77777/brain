@@ -130,7 +130,19 @@ def render():
             due = df_mastery[df_mastery['next_review'] <= now]
             st.metric("Concepts Due for Review Today", len(due))
             st.write("**All Mastered Concepts:**")
-            st.dataframe(df_mastery.style.background_gradient(subset=['score'], cmap='RdYlGn', vmin=0, vmax=1))
+            st.dataframe(
+                df_mastery,
+                column_config={
+                    "score": st.column_config.ProgressColumn(
+                        "Mastery Score",
+                        help="The spaced-repetition mastery score",
+                        format="%.2f",
+                        min_value=0,
+                        max_value=1,
+                    )
+                },
+                hide_index=True
+            )
         else:
             st.info("Take a quiz to start building your mastery profile!")
             
