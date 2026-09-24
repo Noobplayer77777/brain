@@ -128,6 +128,60 @@ def init_db():
             )
         """)
 
+        # Concepts
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS concepts (
+                id TEXT PRIMARY KEY,
+                subject TEXT,
+                name TEXT,
+                canonical_name TEXT,
+                type TEXT,
+                definition TEXT,
+                difficulty INTEGER,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(subject) REFERENCES subjects(name)
+            )
+        """)
+
+        # Concept Links (to Topics)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS concept_links (
+                concept_id TEXT,
+                topic_id TEXT,
+                weight REAL DEFAULT 1.0,
+                PRIMARY KEY(concept_id, topic_id),
+                FOREIGN KEY(concept_id) REFERENCES concepts(id) ON DELETE CASCADE,
+                FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE
+            )
+        """)
+
+        # Concept Resources
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS concept_resources (
+                concept_id TEXT,
+                resource_id TEXT,
+                chunk_id TEXT,
+                relation TEXT,
+                confidence REAL,
+                PRIMARY KEY(concept_id, chunk_id),
+                FOREIGN KEY(concept_id) REFERENCES concepts(id) ON DELETE CASCADE,
+                FOREIGN KEY(resource_id) REFERENCES resources(id) ON DELETE CASCADE
+            )
+        """)
+
+        # Prerequisites
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS prerequisites (
+                concept_id TEXT,
+                prereq_concept_id TEXT,
+                source TEXT,
+                confidence REAL,
+                PRIMARY KEY(concept_id, prereq_concept_id),
+                FOREIGN KEY(concept_id) REFERENCES concepts(id) ON DELETE CASCADE,
+                FOREIGN KEY(prereq_concept_id) REFERENCES concepts(id) ON DELETE CASCADE
+            )
+        """)
+
         # Triggers for syncing FTS
         conn.execute("""
             CREATE TRIGGER IF NOT EXISTS chunks_ai AFTER INSERT ON chunks BEGIN
