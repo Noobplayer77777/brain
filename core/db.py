@@ -182,6 +182,51 @@ def init_db():
             )
         """)
 
+        # Questions
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS questions (
+                id TEXT PRIMARY KEY,
+                subject TEXT,
+                source_type TEXT,
+                source_name TEXT,
+                year INTEGER,
+                exam_type TEXT,
+                question_number TEXT,
+                text TEXT,
+                marks INTEGER,
+                question_type TEXT,
+                archetype TEXT,
+                difficulty INTEGER,
+                model_answer TEXT,
+                rubric TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        # Question Concepts
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS question_concepts (
+                question_id TEXT,
+                concept_id TEXT,
+                confidence REAL,
+                PRIMARY KEY(question_id, concept_id),
+                FOREIGN KEY(question_id) REFERENCES questions(id) ON DELETE CASCADE,
+                FOREIGN KEY(concept_id) REFERENCES concepts(id) ON DELETE CASCADE
+            )
+        """)
+
+        # Question Topics
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS question_topics (
+                question_id TEXT,
+                topic_id TEXT,
+                confidence REAL,
+                PRIMARY KEY(question_id, topic_id),
+                FOREIGN KEY(question_id) REFERENCES questions(id) ON DELETE CASCADE,
+                FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE
+            )
+        """)
+
         # Triggers for syncing FTS
         conn.execute("""
             CREATE TRIGGER IF NOT EXISTS chunks_ai AFTER INSERT ON chunks BEGIN
