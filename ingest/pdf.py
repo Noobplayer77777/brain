@@ -2,6 +2,11 @@ import fitz  # PyMuPDF
 import pytesseract
 from PIL import Image
 import io
+import os
+from config import TESSERACT_CMD
+
+if os.path.exists(TESSERACT_CMD):
+    pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD
 
 def parse_pdf(file_path: str) -> list[dict]:
     doc = fitz.open(file_path)

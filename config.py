@@ -20,3 +20,6 @@ EMBED_MODEL = "nomic-embed-text"
 
 CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
+
+# OCR App Config
+TESSERACT_CMD = os.getenv("TESSERACT_CMD", r"C:\Program Files\Tesseract-OCR\tesseract.exe")
