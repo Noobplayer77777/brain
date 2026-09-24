@@ -80,6 +80,54 @@ def init_db():
             )
         """)
 
+        # Syllabus Tree Tables
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS modules (
+                id TEXT PRIMARY KEY,
+                subject TEXT,
+                code TEXT,
+                title TEXT,
+                order_index INTEGER,
+                marks_weight INTEGER,
+                description TEXT,
+                FOREIGN KEY(subject) REFERENCES subjects(name)
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS topics (
+                id TEXT PRIMARY KEY,
+                module_id TEXT,
+                code TEXT,
+                title TEXT,
+                order_index INTEGER,
+                description TEXT,
+                learning_outcomes TEXT,
+                FOREIGN KEY(module_id) REFERENCES modules(id) ON DELETE CASCADE
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS subtopics (
+                id TEXT PRIMARY KEY,
+                topic_id TEXT,
+                title TEXT,
+                order_index INTEGER,
+                FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS topic_resources (
+                topic_id TEXT,
+                resource_id TEXT,
+                relevance REAL DEFAULT 0.5,
+                PRIMARY KEY(topic_id, resource_id),
+                FOREIGN KEY(topic_id) REFERENCES topics(id) ON DELETE CASCADE,
+                FOREIGN KEY(resource_id) REFERENCES resources(id) ON DELETE CASCADE
+            )
+        """)
+
         # Triggers for syncing FTS
         conn.execute("""
             CREATE TRIGGER IF NOT EXISTS chunks_ai AFTER INSERT ON chunks BEGIN
