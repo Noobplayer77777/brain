@@ -227,6 +227,63 @@ def init_db():
             )
         """)
 
+        # Study Phase Tables
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS attempts (
+                id TEXT PRIMARY KEY,
+                question_id TEXT,
+                user_answer TEXT,
+                submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                time_spent_sec INTEGER,
+                score REAL,
+                max_score REAL,
+                graded_by TEXT,
+                feedback TEXT,
+                missing_points TEXT,
+                FOREIGN KEY(question_id) REFERENCES questions(id)
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS mistakes (
+                id TEXT PRIMARY KEY,
+                attempt_id TEXT,
+                concept_id TEXT,
+                error_type TEXT,
+                note TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(attempt_id) REFERENCES attempts(id),
+                FOREIGN KEY(concept_id) REFERENCES concepts(id)
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS mastery (
+                concept_id TEXT PRIMARY KEY,
+                score REAL DEFAULT 0.0,
+                confidence REAL DEFAULT 0.0,
+                attempts_count INTEGER DEFAULT 0,
+                correct_count INTEGER DEFAULT 0,
+                last_reviewed TIMESTAMP,
+                next_review TIMESTAMP,
+                interval_days REAL DEFAULT 0.0,
+                ease REAL DEFAULT 2.5,
+                FOREIGN KEY(concept_id) REFERENCES concepts(id)
+            )
+        """)
+
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS review_log (
+                id TEXT PRIMARY KEY,
+                concept_id TEXT,
+                reviewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                quality INTEGER,
+                mastery_before REAL,
+                mastery_after REAL,
+                FOREIGN KEY(concept_id) REFERENCES concepts(id)
+            )
+        """)
+
         # Triggers for syncing FTS
         conn.execute("""
             CREATE TRIGGER IF NOT EXISTS chunks_ai AFTER INSERT ON chunks BEGIN
